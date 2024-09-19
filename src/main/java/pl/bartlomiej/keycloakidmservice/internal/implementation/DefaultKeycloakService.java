@@ -50,9 +50,12 @@ public class DefaultKeycloakService implements KeycloakService {
 
             String extractedId = OffsetTransactionOperator.performOffsetFunctionTransaction(
                     response.getHeaders().getFirst(HttpHeaders.LOCATION),
-                    this.getByUsername(keycloakUserRegistration.getUsername()),
+                    Void.TYPE,
                     DefaultKeycloakService::extractIdFromKeycloakLocationHeader,
-                    ur -> this.delete(ur.getId())
+                    (ignoredVoid) -> {
+                        var ur = this.getByUsername(keycloakUserRegistration.getUsername());
+                        this.delete(ur.getId());
+                    }
             );
 
             createdUser = new KeycloakUserRepresentation(
@@ -96,7 +99,7 @@ public class DefaultKeycloakService implements KeycloakService {
     }
 
     private UserRepresentation getByUsername(final String username) {
-        log.info("Starting getting keycloak user by username process.");
+        log.info("Started getting keycloak user by username process.");
         List<UserRepresentation> searched = realmResource.users().search(username);
         if (searched.isEmpty()) {
             log.warn("Keycloak user not found by username.");
