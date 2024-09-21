@@ -20,26 +20,19 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>pl.bartlomiej</groupId>
-            <artifactId>offset-transaction</artifactId>
-            <version>1.0</version>
-        </dependency>
-
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
             <version>24.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.bartlomiej</groupId>
+            <artifactId>offset-transaction</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
