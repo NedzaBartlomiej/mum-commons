@@ -1,9 +1,9 @@
-package pl.bartlomiej.keycloakidmservice.internal.config;
+package pl.bartlomiej.keycloakidmservice.internal;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "keycloak-idm-service")
-public record KeycloakIDMServiceProperties(
+record KeycloakIDMServiceProperties(
         Boolean enabled,
         String serverUrl,
         String realmName,

@@ -1,4 +1,4 @@
-package pl.bartlomiej.keycloakidmservice.internal.implementation;
+package pl.bartlomiej.keycloakidmservice.internal;
 
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
@@ -19,7 +19,6 @@ import pl.bartlomiej.keycloakidmservice.external.exception.KeycloakResponseExcep
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakRole;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRepresentation;
-import pl.bartlomiej.keycloakidmservice.internal.config.KeycloakIDMServiceProperties;
 import pl.bartlomiej.offsettransaction.servlet.OffsetTransactionOperator;
 
 import java.util.Collections;
@@ -28,12 +27,12 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DefaultKeycloakService implements KeycloakService {
+class DefaultKeycloakService implements KeycloakService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultKeycloakService.class);
     private final RealmResource realmResource;
 
-    public DefaultKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
+    DefaultKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
         this.realmResource = keycloak.realm(properties.realmName());
     }
 
