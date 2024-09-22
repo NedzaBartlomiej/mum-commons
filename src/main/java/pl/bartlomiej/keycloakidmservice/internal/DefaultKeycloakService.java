@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import pl.bartlomiej.keycloakidmservice.external.KeycloakService;
+import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
 import pl.bartlomiej.keycloakidmservice.external.exception.KeycloakResponseException;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakRole;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;
