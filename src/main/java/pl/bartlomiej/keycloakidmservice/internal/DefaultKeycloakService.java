@@ -2,6 +2,7 @@ package pl.bartlomiej.keycloakidmservice.internal;
 
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
@@ -45,20 +46,11 @@ class DefaultKeycloakService implements KeycloakService {
 
         KeycloakUserRepresentation createdUser;
         try (Response response = usersResource.create(userRepresentation)) {
-            handleResponseStatus(response, HttpStatus.CREATED);
-
-            String extractedId = OffsetTransactionOperator.performOffsetFunctionTransaction(
-                    response.getHeaders().getFirst(HttpHeaders.LOCATION),
-                    Void.TYPE,
-                    DefaultKeycloakService::extractIdFromKeycloakLocationHeader,
-                    (ignoredVoid) -> {
-                        var ur = this.getByUsername(keycloakUserRegistration.getUsername());
-                        this.delete(ur.getId());
-                    }
-            );
+            
+            String createdId = CreatedResponseUtil.getCreatedId(response);
 
             createdUser = new KeycloakUserRepresentation(
-                    extractedId,
+                    createdId,
                     keycloakUserRegistration.getUsername()
             );
         }
@@ -95,21 +87,6 @@ class DefaultKeycloakService implements KeycloakService {
 
         log.info("Assigning role for the admin.");
         userResource.roles().realmLevel().add(Collections.singletonList(roleRepresentation));
-    }
-
-    private UserRepresentation getByUsername(final String username) {
-        log.info("Started getting keycloak user by username process.");
-        List<UserRepresentation> searched = realmResource.users().search(username);
-        if (searched.isEmpty()) {
-            log.warn("Keycloak user not found by username.");
-            throw new NotFoundException();
-        } else if (searched.size() > 1) {
-            log.error("Searching keycloak users by username method returned more than one user.");
-            throw new IllegalStateException();
-        } else {
-            log.info("Successfully searched unique user by username, returning.");
-            return searched.getFirst();
-        }
     }
 
     private static void handleResponseStatus(final Response response, final HttpStatus successStatus) {
