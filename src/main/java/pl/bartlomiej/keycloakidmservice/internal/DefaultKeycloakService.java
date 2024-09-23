@@ -1,6 +1,5 @@
 package pl.bartlomiej.keycloakidmservice.internal;
 
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -8,12 +7,9 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.idm.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
 import pl.bartlomiej.keycloakidmservice.external.exception.KeycloakResponseException;
@@ -23,10 +19,6 @@ import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRepresentatio
 import pl.bartlomiej.offsettransaction.servlet.OffsetTransactionOperator;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 class DefaultKeycloakService implements KeycloakService {
 
@@ -40,13 +32,16 @@ class DefaultKeycloakService implements KeycloakService {
     @Override
     public KeycloakUserRepresentation create(final KeycloakUserRegistration keycloakUserRegistration) {
         log.info("Started keycloak user creation process.");
+
         UserRepresentation userRepresentation = buildUserRepresentation(keycloakUserRegistration);
 
         UsersResource usersResource = this.realmResource.users();
 
+        log.info("Creating user.");
         KeycloakUserRepresentation createdUser;
         try (Response response = usersResource.create(userRepresentation)) {
-            
+            handleResponseStatus(response, HttpStatus.CREATED);
+
             String createdId = CreatedResponseUtil.getCreatedId(response);
 
             createdUser = new KeycloakUserRepresentation(
@@ -62,6 +57,10 @@ class DefaultKeycloakService implements KeycloakService {
                 this::delete
         );
 
+        log.info("Sending verification email message.");
+        usersResource.get(createdUser.id()).sendVerifyEmail();
+
+        log.debug("Returning created user successfully.");
         return createdUser;
     }
 
@@ -97,33 +96,14 @@ class DefaultKeycloakService implements KeycloakService {
         }
     }
 
-    private static String extractIdFromKeycloakLocationHeader(final Object header) {
-
-        final Pattern idPattern = Pattern.compile(".*/users/([a-fA-F0-9\\-]{36})");
-
-        if (header == null) {
-            throw new IllegalArgumentException("No Location header found.");
-        }
-
-        final String headerValue = header.toString();
-        log.debug("Extracting keycloak user id from Location header -> {}", headerValue);
-
-        Matcher matcher = idPattern.matcher(headerValue);
-        if (matcher.find()) {
-            String foundId = matcher.group(1);
-            log.debug("Id found in pattern matching - {}", foundId);
-            return foundId;
-        } else {
-            throw new NoSuchElementException("No Id found in the Location header.");
-        }
-    }
-
     private static UserRepresentation buildUserRepresentation(final KeycloakUserRegistration keycloakUserRegistration) {
         log.debug("Building UserRepresentation for the user being created.");
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEnabled(true);
         userRepresentation.setUsername(keycloakUserRegistration.getUsername());
-        userRepresentation.setEmailVerified(true);
+        userRepresentation.setEmail("bartek21122006@gmail.com");
+        userRepresentation.setEmailVerified(false);
+        userRepresentation.setRequiredActions(Collections.singletonList("VERIFY_EMAIL"));
 
         CredentialRepresentation credentialRepresentation = buildCredentialRepresentation(keycloakUserRegistration);
 
