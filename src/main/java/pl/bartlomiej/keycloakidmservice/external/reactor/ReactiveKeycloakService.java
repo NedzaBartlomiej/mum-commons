@@ -1,4 +1,4 @@
-package pl.bartlomiej.keycloakidmservice.external.servlet;
+package pl.bartlomiej.keycloakidmservice.external.reactor;
 
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakRole;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;

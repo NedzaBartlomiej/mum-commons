@@ -6,4 +6,6 @@ public interface KeycloakUserRegistration {
     String getPassword();
 
     KeycloakRole getDefaultRole();
+
+    String getEmail();
 }

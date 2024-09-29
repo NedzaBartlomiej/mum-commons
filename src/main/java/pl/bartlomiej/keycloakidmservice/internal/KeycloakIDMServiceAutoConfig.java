@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import pl.bartlomiej.keycloakidmservice.external.reactor.ReactiveKeycloakService;
 import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
 
 @AutoConfiguration
@@ -28,5 +29,10 @@ class KeycloakIDMServiceAutoConfig {
     @Bean
     public KeycloakService keycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
         return new DefaultKeycloakService(properties, keycloak);
+    }
+
+    @Bean
+    public ReactiveKeycloakService reactiveKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
+        return new DefaultReactiveKeycloakService(properties, keycloak);
     }
 }
