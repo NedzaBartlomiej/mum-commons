@@ -12,7 +12,6 @@ import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
 
 @AutoConfiguration
 @EnableConfigurationProperties(KeycloakIDMServiceProperties.class)
-@ConditionalOnProperty(value = "keycloak-idm-service", havingValue = "true", matchIfMissing = true)
 class KeycloakIDMServiceAutoConfig {
 
     @Bean
@@ -27,11 +26,13 @@ class KeycloakIDMServiceAutoConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "keycloak-idm-service.type", havingValue = "servlet")
     public KeycloakService keycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
         return new DefaultKeycloakService(properties, keycloak);
     }
 
     @Bean
+    @ConditionalOnProperty(value = "keycloak-idm-service.type", havingValue = "reactor")
     public ReactiveKeycloakService reactiveKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
         return new DefaultReactiveKeycloakService(properties, keycloak);
     }

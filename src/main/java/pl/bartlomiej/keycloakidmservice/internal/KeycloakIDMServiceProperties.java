@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "keycloak-idm-service")
 public record KeycloakIDMServiceProperties(
-        Boolean enabled,
+        String type,
         String serverUrl,
         String realmName,
         String clientId,
