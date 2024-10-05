@@ -8,7 +8,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import pl.bartlomiej.keycloakidmservice.external.exception.KeycloakResponseException;
+import org.springframework.web.ErrorResponseException;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakRole;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;
 import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRepresentation;
@@ -107,9 +107,8 @@ public class DefaultReactiveKeycloakService extends AbstractKeycloakService impl
 
     private static Mono<Void> handleResponseStatus(final Response response, final HttpStatus successStatus) {
         if (response.getStatus() != successStatus.value()) {
-            log.error("Some error status occurred in keycloak user creation process response: {}" +
-                    "Forwarding exception to the RestControllerAdvice", response.getStatusInfo());
-            return Mono.error(new KeycloakResponseException(HttpStatus.valueOf(response.getStatus())));
+            log.error("Some error status occurred in keycloak user creation process response: {}", response.getStatusInfo());
+            return Mono.error(new ErrorResponseException(HttpStatus.valueOf(response.getStatus())));
         }
         return Mono.empty();
     }
