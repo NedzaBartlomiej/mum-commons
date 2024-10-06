@@ -1,4 +1,4 @@
-package pl.bartlomiej.keycloakidmservice.external.model;
+package pl.bartlomiej.globalidmservice.external.keycloakidm.model;
 
 public interface KeycloakUserRegistration {
     String getUsername();

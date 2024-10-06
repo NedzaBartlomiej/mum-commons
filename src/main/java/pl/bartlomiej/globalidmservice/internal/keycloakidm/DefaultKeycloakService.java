@@ -1,4 +1,4 @@
-package pl.bartlomiej.keycloakidmservice.internal;
+package pl.bartlomiej.globalidmservice.internal.keycloakidm;
 
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
@@ -13,10 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.keycloakidmservice.external.model.KeycloakRole;
-import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;
-import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRepresentation;
-import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
+import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakRole;
+import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
+import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
+import pl.bartlomiej.globalidmservice.external.keycloakidm.servlet.KeycloakService;
 import pl.bartlomiej.offsettransaction.servlet.OffsetTransactionOperator;
 
 import java.util.Collections;

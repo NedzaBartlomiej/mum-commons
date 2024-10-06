@@ -1,10 +1,10 @@
-package pl.bartlomiej.keycloakidmservice.internal;
+package pl.bartlomiej.globalidmservice.internal.keycloakidm;
 
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;
+import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
 
 import java.util.Collections;
 
