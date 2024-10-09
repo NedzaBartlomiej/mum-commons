@@ -10,13 +10,13 @@ import pl.bartlomiej.mummicroservicecommons.authconversion.external.servlet.Keyc
 class AuthConversionAutoConfig {
 
     @Bean
-    @ConditionalOnProperty(value = "jwt-granted-authority-converter.type", havingValue = "servlet")
+    @ConditionalOnProperty(value = "mum-microservice-commons.auth-conversion.type", havingValue = "servlet")
     KeycloakJwtGrantedAuthoritiesConverter keycloakJwtGrantedAuthoritiesConverter() {
         return new KeycloakJwtGrantedAuthoritiesConverter();
     }
 
     @Bean
-    @ConditionalOnProperty(value = "jwt-granted-authority-converter.type", havingValue = "reactor")
+    @ConditionalOnProperty(value = "mum-microservice-commons.auth-conversion.type", havingValue = "reactor")
     KeycloakReactiveJwtGrantedAuthoritiesConverter keycloakReactiveJwtGrantedAuthoritiesConverter() {
         return new KeycloakReactiveJwtGrantedAuthoritiesConverter();
     }

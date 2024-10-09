@@ -26,13 +26,13 @@ class KeycloakIDMServiceAutoConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "global-idm-service.type", havingValue = "servlet")
+    @ConditionalOnProperty(value = "mum-microservice-commons.global-idm-service.type", havingValue = "servlet")
     public KeycloakService keycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
         return new DefaultKeycloakService(properties, keycloak);
     }
 
     @Bean
-    @ConditionalOnProperty(value = "global-idm-service.type", havingValue = "reactor")
+    @ConditionalOnProperty(value = "mum-microservice-commons.global-idm-service.type", havingValue = "reactor")
     public ReactiveKeycloakService reactiveKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
         return new DefaultReactiveKeycloakService(properties, keycloak);
     }

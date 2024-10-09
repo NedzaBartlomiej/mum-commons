@@ -7,7 +7,7 @@ import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ErrorResp
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.GlobalHttpStatusResolver;
 
 @AutoConfiguration
-class SpringExceptionHandlingBundleAutoConfig {
+class ExceptionHandlingAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean

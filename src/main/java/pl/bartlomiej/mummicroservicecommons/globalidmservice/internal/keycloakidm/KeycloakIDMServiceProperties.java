@@ -2,7 +2,7 @@ package pl.bartlomiej.mummicroservicecommons.globalidmservice.internal.keycloaki
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "global-idm-service.keycloak")
+@ConfigurationProperties(prefix = "mum-microservice-commons.global-idm-service.keycloak")
 public record KeycloakIDMServiceProperties(
         String type,
         String serverUrl,
