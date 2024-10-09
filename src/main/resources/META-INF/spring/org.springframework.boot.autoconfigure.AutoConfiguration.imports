@@ -1,1 +1,3 @@
-pl.bartlomiej.globalidmservice.internal.keycloakidm.KeycloakIDMServiceAutoConfig
+pl.bartlomiej.mummicroservicecommons.globalidmservice.internal.keycloakidm.KeycloakIDMServiceAutoConfig
+pl.bartlomiej.mummicroservicecommons.authconversion.internal.AuthConversionAutoConfig
+pl.bartlomiej.mummicroservicecommons.exceptionhandling.internal.SpringExceptionHandlingBundleAutoConfig
