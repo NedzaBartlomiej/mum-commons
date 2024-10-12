@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.ErrorResponseException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
@@ -38,6 +39,16 @@ public class ErrorResponseModelGlobalRestControllerAdvice {
                         HttpStatus.BAD_REQUEST,
                         HttpStatus.BAD_REQUEST.value(),
                         Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()
+                ));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseModel> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseModel(
+                        HttpStatus.BAD_REQUEST,
+                        HttpStatus.BAD_REQUEST.value(),
+                        Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage()
                 ));
     }
 

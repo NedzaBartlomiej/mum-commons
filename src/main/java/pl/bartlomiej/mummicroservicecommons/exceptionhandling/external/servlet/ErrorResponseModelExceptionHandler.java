@@ -26,6 +26,7 @@ public class ErrorResponseModelExceptionHandler {
 
     public void processException(HttpServletResponse response, final Throwable exception) {
         log.debug("Processing an exception.");
+        log.error("Exception Message: {}, Exception: {}", exception.getMessage(), exception.getClass());
         final HttpStatus httpStatus = globalHttpStatusResolver.resolveHttpStatus(exception);
         final ErrorResponseModel responseModel = new ErrorResponseModel(httpStatus, httpStatus.value(), httpStatus.getReasonPhrase());
         try {

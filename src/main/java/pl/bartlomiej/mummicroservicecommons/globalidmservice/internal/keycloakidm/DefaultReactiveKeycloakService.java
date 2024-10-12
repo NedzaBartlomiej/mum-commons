@@ -23,8 +23,10 @@ import java.util.Collections;
 public class DefaultReactiveKeycloakService extends AbstractKeycloakService implements ReactiveKeycloakService {
     private static final Logger log = LoggerFactory.getLogger(DefaultReactiveKeycloakService.class);
     private final RealmResource realmResource;
+    private final Keycloak keycloak;
 
     DefaultReactiveKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
+        this.keycloak = keycloak;
         this.realmResource = keycloak.realm(properties.realmName());
     }
 
@@ -103,6 +105,11 @@ public class DefaultReactiveKeycloakService extends AbstractKeycloakService impl
                             .add(Collections.singletonList(roleRepresentation))
                     ).subscribeOn(Schedulers.boundedElastic());
                 }).then();
+    }
+
+    @Override
+    public Mono<String> getAccessToken() {
+        return Mono.fromCallable(() -> keycloak.tokenManager().getAccessTokenString());
     }
 
     private static Mono<Void> handleResponseStatus(final Response response, final HttpStatus successStatus) {
