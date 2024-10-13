@@ -11,7 +11,7 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.server.ServerWebExchange;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ErrorResponseModel;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.GlobalHttpStatusResolver;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.GlobalHttpStatusResolver;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;

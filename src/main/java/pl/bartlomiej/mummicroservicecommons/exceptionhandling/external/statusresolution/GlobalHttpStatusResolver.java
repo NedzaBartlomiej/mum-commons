@@ -1,4 +1,4 @@
-package pl.bartlomiej.mummicroservicecommons.exceptionhandling.external;
+package pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution;
 
 import org.springframework.http.HttpStatus;
 
