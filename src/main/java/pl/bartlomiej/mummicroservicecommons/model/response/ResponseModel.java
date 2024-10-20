@@ -32,9 +32,9 @@ public class ResponseModel<T> {
         private String message;
         private T body;
 
-        public Builder(HttpStatus httpStatus, int httpStatusCode) {
+        public Builder(HttpStatus httpStatus) {
             this.httpStatus = httpStatus;
-            this.httpStatusCode = httpStatusCode;
+            this.httpStatusCode = httpStatus.value();
         }
 
         public Builder<T> message(String message) {
