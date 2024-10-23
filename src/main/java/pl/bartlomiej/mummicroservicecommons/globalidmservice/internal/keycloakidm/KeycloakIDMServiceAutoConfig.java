@@ -12,6 +12,7 @@ import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakid
 
 @AutoConfiguration
 @EnableConfigurationProperties(KeycloakIDMServiceProperties.class)
+@ConditionalOnProperty(value = "mum-microservice-commons.global-idm-service.keycloak.enabled", havingValue = "true", matchIfMissing = true)
 class KeycloakIDMServiceAutoConfig {
 
     @Bean
