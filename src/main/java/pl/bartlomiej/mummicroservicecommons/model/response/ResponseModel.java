@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseModel<T> {
+public class ResponseModel<T> { // todo - make it deserializable somehow
 
     private final HttpStatus httpStatus;
     private final Integer httpStatusCode;

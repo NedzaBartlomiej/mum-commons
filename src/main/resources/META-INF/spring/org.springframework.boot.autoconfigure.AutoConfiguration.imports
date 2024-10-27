@@ -1,3 +1,5 @@
 pl.bartlomiej.mummicroservicecommons.globalidmservice.internal.keycloakidm.KeycloakIDMServiceAutoConfig
 pl.bartlomiej.mummicroservicecommons.authconversion.internal.AuthConversionAutoConfig
 pl.bartlomiej.mummicroservicecommons.exceptionhandling.internal.ExceptionHandlingAutoConfig
+pl.bartlomiej.mummicroservicecommons.emailintegration.internal.HttpClientConfig
+pl.bartlomiej.mummicroservicecommons.emailintegration.internal.HttpExchangeClientConfig
