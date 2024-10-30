@@ -7,20 +7,19 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.server.WebExceptionHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ErrorResponseModelGlobalRestControllerAdvice;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultErrorResponseModelServerAccessDeniedHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultErrorResponseModelServerAuthEntryPoint;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.ErrorResponseModelServerExceptionHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.ErrorResponseModelWebExceptionHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.DefaultErrorResponseModelAccessDeniedHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.DefaultErrorResponseModelAuthEntryPoint;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.ErrorResponseModelErrorController;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.ErrorResponseModelExceptionHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ResponseModelGlobalRestControllerAdvice;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultResponseModelServerAccessDeniedHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultResponseModelServerAuthEntryPoint;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.ResponseModelServerExceptionHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.ResponseModelWebExceptionHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.DefaultResponseModelAccessDeniedHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.DefaultResponseModelAuthEntryPoint;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.ResponseModelErrorController;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.ResponseModelExceptionHandler;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.DefaultErrorStatusOptionProvider;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.ErrorStatusOptionProvider;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.GlobalHttpStatusResolver;
@@ -35,8 +34,8 @@ class ExceptionHandlingAutoConfig {
     }
 
     @Bean
-    ErrorResponseModelGlobalRestControllerAdvice errorResponseModelGlobalRestControllerAdvice() {
-        return new ErrorResponseModelGlobalRestControllerAdvice();
+    ResponseModelGlobalRestControllerAdvice responseModelGlobalRestControllerAdvice() {
+        return new ResponseModelGlobalRestControllerAdvice();
     }
 
     @Bean
@@ -47,8 +46,8 @@ class ExceptionHandlingAutoConfig {
 
     @Bean
     @ConditionalOnProperty(value = "mum-microservice-commons.exception-handling.type", havingValue = "servlet")
-    ErrorController errorController() {
-        return new ErrorResponseModelErrorController();
+    ResponseModelErrorController responseModelErrorController() {
+        return new ResponseModelErrorController();
     }
 
     @Bean
@@ -57,49 +56,49 @@ class ExceptionHandlingAutoConfig {
                                             WebProperties webProperties,
                                             ApplicationContext applicationContext,
                                             ServerCodecConfigurer serverCodecConfigurer) {
-        return new ErrorResponseModelWebExceptionHandler(errorAttributes, webProperties, applicationContext, serverCodecConfigurer);
+        return new ResponseModelWebExceptionHandler(errorAttributes, webProperties, applicationContext, serverCodecConfigurer);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "mum-microservice-commons.exception-handling.type", havingValue = "servlet")
-    ErrorResponseModelExceptionHandler errorResponseModelExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver httpStatusResolver) {
-        return new ErrorResponseModelExceptionHandler(objectMapper, httpStatusResolver);
+    ResponseModelExceptionHandler responseModelExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver httpStatusResolver) {
+        return new ResponseModelExceptionHandler(objectMapper, httpStatusResolver);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "mum-microservice-commons.exception-handling.type", havingValue = "reactor")
-    ErrorResponseModelServerExceptionHandler errorResponseModelServerExceptionHandler(ObjectMapper objectMapper,
-                                                                                      GlobalHttpStatusResolver globalHttpStatusResolver) {
-        return new ErrorResponseModelServerExceptionHandler(objectMapper, globalHttpStatusResolver);
+    ResponseModelServerExceptionHandler responseModelServerExceptionHandler(ObjectMapper objectMapper,
+                                                                            GlobalHttpStatusResolver globalHttpStatusResolver) {
+        return new ResponseModelServerExceptionHandler(objectMapper, globalHttpStatusResolver);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "mum-microservice-commons.exception-handling.type", havingValue = "servlet")
-    DefaultErrorResponseModelAuthEntryPoint defaultErrorResponseModelAuthEntryPoint(ErrorResponseModelExceptionHandler exceptionHandler) {
-        return new DefaultErrorResponseModelAuthEntryPoint(exceptionHandler);
+    DefaultResponseModelAuthEntryPoint defaultResponseModelAuthEntryPoint(ResponseModelExceptionHandler exceptionHandler) {
+        return new DefaultResponseModelAuthEntryPoint(exceptionHandler);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "mum-microservice-commons.exception-handling.type", havingValue = "servlet")
-    DefaultErrorResponseModelAccessDeniedHandler defaultErrorResponseModelAccessDeniedHandler(ErrorResponseModelExceptionHandler exceptionHandler) {
-        return new DefaultErrorResponseModelAccessDeniedHandler(exceptionHandler);
+    DefaultResponseModelAccessDeniedHandler defaultResponseModelAccessDeniedHandler(ResponseModelExceptionHandler exceptionHandler) {
+        return new DefaultResponseModelAccessDeniedHandler(exceptionHandler);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "mum-microservice-commons.exception-handling.type", havingValue = "reactor")
-    DefaultErrorResponseModelServerAuthEntryPoint defaultErrorResponseModelServerAuthEntryPoint(ErrorResponseModelServerExceptionHandler exceptionHandler) {
-        return new DefaultErrorResponseModelServerAuthEntryPoint(exceptionHandler);
+    DefaultResponseModelServerAuthEntryPoint defaultResponseModelServerAuthEntryPoint(ResponseModelServerExceptionHandler exceptionHandler) {
+        return new DefaultResponseModelServerAuthEntryPoint(exceptionHandler);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "mum-microservice-commons.exception-handling.type", havingValue = "reactor")
-    DefaultErrorResponseModelServerAccessDeniedHandler defaultErrorResponseModelServerAccessDeniedHandler(ErrorResponseModelServerExceptionHandler exceptionHandler) {
-        return new DefaultErrorResponseModelServerAccessDeniedHandler(exceptionHandler);
+    DefaultResponseModelServerAccessDeniedHandler defaultResponseModelServerAccessDeniedHandler(ResponseModelServerExceptionHandler exceptionHandler) {
+        return new DefaultResponseModelServerAccessDeniedHandler(exceptionHandler);
     }
 }

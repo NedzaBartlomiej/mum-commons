@@ -3,6 +3,8 @@ package pl.bartlomiej.mummicroservicecommons.globalidmservice.internal.serviceid
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.ErrorResponseException;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
@@ -30,7 +32,7 @@ public abstract class AbstractIDMService<T> implements IDMServiceTemplate<T> {
     protected abstract String getEntityId(T entity);
 
     @Override
-    public T create(KeycloakUserRegistration keycloakUserRegistration, String ipAddress) {
+    public T create(final KeycloakUserRegistration keycloakUserRegistration, final String ipAddress) {
         log.info("Started user creation process.");
         var keycloakUserRepresentation = keycloakService.create(keycloakUserRegistration);
         T entity = this.createEntity(keycloakUserRepresentation, ipAddress);
@@ -42,5 +44,10 @@ public abstract class AbstractIDMService<T> implements IDMServiceTemplate<T> {
                 crudRepository::save,
                 keycloakService::delete
         );
+    }
+
+    @Override
+    public T getEntity(final String id) {
+        return this.crudRepository.findById(id).orElseThrow(() -> new ErrorResponseException(HttpStatus.NOT_FOUND));
     }
 }

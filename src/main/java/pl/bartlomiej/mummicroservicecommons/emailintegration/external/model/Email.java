@@ -3,6 +3,14 @@ package pl.bartlomiej.mummicroservicecommons.emailintegration.external.model;
 import jakarta.validation.constraints.NotBlank;
 
 public abstract class Email {
+    @Override
+    public String toString() {
+        return "Email{" +
+                "receiverEmail='" + receiverEmail + '\'' +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 
     @NotBlank
     @jakarta.validation.constraints.Email

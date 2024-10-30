@@ -8,18 +8,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ErrorResponseModel;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.GlobalHttpStatusResolver;
+import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
 import java.io.IOException;
 
-public class ErrorResponseModelExceptionHandler {
+public class ResponseModelExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(ErrorResponseModelExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ResponseModelExceptionHandler.class);
     private final ObjectMapper objectMapper;
     private final GlobalHttpStatusResolver globalHttpStatusResolver;
 
-    public ErrorResponseModelExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver globalHttpStatusResolver) {
+    public ResponseModelExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver globalHttpStatusResolver) {
         this.objectMapper = objectMapper;
         this.globalHttpStatusResolver = globalHttpStatusResolver;
     }
@@ -27,8 +27,8 @@ public class ErrorResponseModelExceptionHandler {
     public void processException(HttpServletResponse response, final Throwable exception) {
         log.debug("Processing an exception.");
         log.error("Exception Message: {}, Exception: {}", exception.getMessage(), exception.getClass());
-        final HttpStatus httpStatus = globalHttpStatusResolver.resolveHttpStatus(exception);
-        final ErrorResponseModel responseModel = new ErrorResponseModel(httpStatus, httpStatus.value(), httpStatus.getReasonPhrase());
+        HttpStatus httpStatus = globalHttpStatusResolver.resolveHttpStatus(exception);
+        var responseModel = ResponseModel.buildBasicErrorResponseModel(httpStatus, httpStatus.getReasonPhrase());
         try {
             this.writeResponse(response, responseModel);
         } catch (IOException e) {
@@ -37,7 +37,7 @@ public class ErrorResponseModelExceptionHandler {
         }
     }
 
-    private void writeResponse(HttpServletResponse response, final ErrorResponseModel responseModel) throws IOException {
+    private void writeResponse(HttpServletResponse response, final ResponseModel<Void> responseModel) throws IOException {
         log.debug("Started the process of writing an error response.");
 
         log.debug("Setting {} to {}", HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);

@@ -25,8 +25,10 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
 
     private static final Logger log = LoggerFactory.getLogger(DefaultKeycloakService.class);
     private final RealmResource realmResource;
+    private final Keycloak keycloak;
 
     DefaultKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
+        this.keycloak = keycloak;
         this.realmResource = keycloak.realm(properties.realmName());
     }
 
@@ -89,6 +91,11 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
 
         log.info("Assigning keycloak role to an user.");
         userResource.roles().realmLevel().add(Collections.singletonList(roleRepresentation));
+    }
+
+    @Override
+    public String getAccessToken() {
+        return keycloak.tokenManager().getAccessTokenString();
     }
 
     private static void handleResponseStatus(final Response response, final HttpStatus successStatus) {

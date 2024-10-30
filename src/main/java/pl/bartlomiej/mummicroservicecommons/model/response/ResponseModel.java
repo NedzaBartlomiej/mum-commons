@@ -1,6 +1,10 @@
 package pl.bartlomiej.mummicroservicecommons.model.response;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -8,7 +12,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseModel<T> { // todo - make it deserializable somehow
+@JsonDeserialize(builder = ResponseModel.Builder.class)
+public class ResponseModel<T> {
 
     private final HttpStatus httpStatus;
     private final Integer httpStatusCode;
@@ -24,6 +29,7 @@ public class ResponseModel<T> { // todo - make it deserializable somehow
         this.body = builder.body;
     }
 
+    @JsonPOJOBuilder(withPrefix = "")
     public static class Builder<T> {
 
         private final HttpStatus httpStatus;
@@ -32,7 +38,8 @@ public class ResponseModel<T> { // todo - make it deserializable somehow
         private String message;
         private T body;
 
-        public Builder(HttpStatus httpStatus) {
+        @JsonCreator
+        public Builder(@JsonProperty("httpStatus") HttpStatus httpStatus) {
             this.httpStatus = httpStatus;
             this.httpStatusCode = httpStatus.value();
         }
@@ -50,5 +57,9 @@ public class ResponseModel<T> { // todo - make it deserializable somehow
         public ResponseModel<T> build() {
             return new ResponseModel<>(this);
         }
+    }
+
+    public static ResponseModel<Void> buildBasicErrorResponseModel(HttpStatus httpStatus, String errMessage) {
+        return new Builder<Void>(httpStatus).message(errMessage).build();
     }
 }

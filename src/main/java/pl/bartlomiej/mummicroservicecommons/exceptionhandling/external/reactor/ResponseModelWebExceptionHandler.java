@@ -11,18 +11,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.*;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ErrorResponseModel;
+import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
 @Order(-2)
-public class ErrorResponseModelWebExceptionHandler extends AbstractErrorWebExceptionHandler {
+public class ResponseModelWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
-    public ErrorResponseModelWebExceptionHandler(ErrorAttributes errorAttributes,
-                                                 WebProperties webProperties,
-                                                 ApplicationContext applicationContext,
-                                                 ServerCodecConfigurer serverCodecConfigurer) {
+    public ResponseModelWebExceptionHandler(ErrorAttributes errorAttributes,
+                                            WebProperties webProperties,
+                                            ApplicationContext applicationContext,
+                                            ServerCodecConfigurer serverCodecConfigurer) {
         super(errorAttributes, webProperties.getResources(), applicationContext);
         super.setMessageWriters(serverCodecConfigurer.getWriters());
         super.setMessageReaders(serverCodecConfigurer.getReaders());
@@ -41,9 +41,7 @@ public class ErrorResponseModelWebExceptionHandler extends AbstractErrorWebExcep
         final int statusCode = Integer.parseInt(errorAttributes.get("status").toString());
         final HttpStatus httpStatus = HttpStatus.valueOf(statusCode);
 
-        ErrorResponseModel responseModel = new ErrorResponseModel(
-                httpStatus,
-                statusCode,
+        ResponseModel<Void> responseModel = ResponseModel.buildBasicErrorResponseModel(httpStatus,
                 getErrorMessage(httpStatus, errorAttributes)
         );
 

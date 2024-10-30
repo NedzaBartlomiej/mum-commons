@@ -15,4 +15,6 @@ public interface IDMServiceTemplate<T> {
      * @param ipAddress                user's IP Address used to ip-auth-protection feature
      */
     T create(KeycloakUserRegistration keycloakUserRegistration, String ipAddress);
+
+    T getEntity(String id);
 }

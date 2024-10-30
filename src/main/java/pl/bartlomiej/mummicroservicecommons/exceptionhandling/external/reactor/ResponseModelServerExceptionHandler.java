@@ -10,19 +10,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.server.ServerWebExchange;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ErrorResponseModel;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.GlobalHttpStatusResolver;
+import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 
-public class ErrorResponseModelServerExceptionHandler {
+public class ResponseModelServerExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(ErrorResponseModelServerExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ResponseModelServerExceptionHandler.class);
     private final GlobalHttpStatusResolver globalHttpStatusResolver;
     private final ObjectMapper objectMapper;
 
-    public ErrorResponseModelServerExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver globalHttpStatusResolver) {
+    public ResponseModelServerExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver globalHttpStatusResolver) {
         this.objectMapper = objectMapper;
         this.globalHttpStatusResolver = globalHttpStatusResolver;
     }
@@ -30,10 +30,8 @@ public class ErrorResponseModelServerExceptionHandler {
     public Mono<Void> processException(ServerWebExchange exchange, final Throwable exception) {
         log.debug("Processing an exception.");
         log.error("Exception Message: {}, Exception: {}", exception.getMessage(), exception.getClass());
-        final HttpStatus httpStatus = globalHttpStatusResolver.resolveHttpStatus(exception);
-        final ErrorResponseModel responseModel = new ErrorResponseModel(
-                httpStatus, httpStatus.value(), httpStatus.getReasonPhrase()
-        );
+        HttpStatus httpStatus = globalHttpStatusResolver.resolveHttpStatus(exception);
+        var responseModel = ResponseModel.buildBasicErrorResponseModel(httpStatus, httpStatus.getReasonPhrase());
         return this.writeResponse(exchange.getResponse(), responseModel)
                 .onErrorResume(e -> {
                     log.error("Something went wrong while writing the response.", e);
@@ -41,7 +39,7 @@ public class ErrorResponseModelServerExceptionHandler {
                 });
     }
 
-    private Mono<Void> writeResponse(ServerHttpResponse response, final ErrorResponseModel responseModel) {
+    private Mono<Void> writeResponse(ServerHttpResponse response, final ResponseModel<Void> responseModel) {
         log.debug("Started the process of writing an error response.");
 
         log.debug("Setting {} to {}", HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);

@@ -5,11 +5,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-public class DefaultErrorResponseModelAccessDeniedHandler implements AccessDeniedHandler {
+public class DefaultResponseModelAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final ErrorResponseModelExceptionHandler exceptionHandler;
+    private final ResponseModelExceptionHandler exceptionHandler;
 
-    public DefaultErrorResponseModelAccessDeniedHandler(ErrorResponseModelExceptionHandler exceptionHandler) {
+    public DefaultResponseModelAccessDeniedHandler(ResponseModelExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 
