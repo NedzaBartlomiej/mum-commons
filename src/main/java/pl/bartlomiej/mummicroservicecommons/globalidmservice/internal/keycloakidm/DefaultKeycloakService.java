@@ -7,6 +7,7 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
@@ -26,10 +27,12 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
     private static final Logger log = LoggerFactory.getLogger(DefaultKeycloakService.class);
     private final RealmResource realmResource;
     private final Keycloak keycloak;
+    private final KeycloakProperties properties;
 
-    DefaultKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
+    DefaultKeycloakService(KeycloakProperties properties, Keycloak keycloak) {
         this.keycloak = keycloak;
         this.realmResource = keycloak.realm(properties.realmName());
+        this.properties = properties;
     }
 
     @Override
@@ -55,7 +58,7 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
         OffsetTransactionOperator.performOffsetConsumerTransaction(
                 createdUser,
                 createdUser.id(),
-                u -> this.assignRole(u.id(), keycloakUserRegistration.getDefaultRole()),
+                u -> this.assignClientRole(u.id(), keycloakUserRegistration.getDefaultRole()),
                 this::delete
         );
 
@@ -81,16 +84,17 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
     }
 
     @Override
-    public void assignRole(final String id, final KeycloakRole keycloakRole) {
+    public void assignClientRole(final String id, final KeycloakRole keycloakRole) {
         log.info("Started user assigning role process.");
         UserResource userResource = realmResource.users().get(id);
-        RolesResource rolesResource = realmResource.roles();
+        ClientRepresentation clientRepresentation = realmResource.clients().findByClientId(properties.clientId()).getFirst();
+        RolesResource rolesResource = realmResource.clients().get(clientRepresentation.getId()).roles();
 
         log.debug("Getting equivalent keycloak role to argument role.");
         RoleRepresentation roleRepresentation = rolesResource.get(keycloakRole.getRole()).toRepresentation();
 
         log.info("Assigning keycloak role to an user.");
-        userResource.roles().realmLevel().add(Collections.singletonList(roleRepresentation));
+        userResource.roles().clientLevel(clientRepresentation.getId()).add(Collections.singletonList(roleRepresentation));
     }
 
     @Override

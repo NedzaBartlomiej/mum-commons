@@ -11,12 +11,12 @@ import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakid
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
 
 @AutoConfiguration
-@EnableConfigurationProperties(KeycloakIDMServiceProperties.class)
-@ConditionalOnProperty(value = "mum-microservice-commons.global-idm-service.keycloak.enabled", havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties(KeycloakProperties.class)
+@ConditionalOnProperty(value = "mum-microservice-commons.global-idm-service.keycloak.enabled", havingValue = "true")
 class KeycloakIDMServiceAutoConfig {
 
     @Bean
-    Keycloak keycloakClient(KeycloakIDMServiceProperties properties) {
+    Keycloak keycloakClient(KeycloakProperties properties) {
         return KeycloakBuilder.builder()
                 .serverUrl(properties.serverUrl())
                 .realm(properties.realmName())
@@ -27,14 +27,13 @@ class KeycloakIDMServiceAutoConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "mum-microservice-commons.global-idm-service.type", havingValue = "servlet")
-    public KeycloakService keycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
+    public KeycloakService keycloakService(KeycloakProperties properties, Keycloak keycloak) {
         return new DefaultKeycloakService(properties, keycloak);
     }
 
     @Bean
     @ConditionalOnProperty(value = "mum-microservice-commons.global-idm-service.type", havingValue = "reactor")
-    public ReactiveKeycloakService reactiveKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
-        return new DefaultReactiveKeycloakService(properties, keycloak);
+    public ReactiveKeycloakService reactiveKeycloakService(KeycloakProperties properties, Keycloak keycloak, KeycloakService keycloakService) {
+        return new DefaultReactiveKeycloakService(properties, keycloak, keycloakService);
     }
 }

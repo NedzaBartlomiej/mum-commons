@@ -10,7 +10,7 @@ public interface ReactiveKeycloakService {
 
     Mono<Void> delete(String id);
 
-    Mono<Void> assignRole(String id, KeycloakRole keycloakRole);
+    Mono<Void> assignClientRole(String id, KeycloakRole keycloakRole);
 
     Mono<String> getAccessToken();
 }

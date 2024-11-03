@@ -9,7 +9,7 @@ public interface KeycloakService {
 
     void delete(String id);
 
-    void assignRole(String id, KeycloakRole keycloakRole);
+    void assignClientRole(String id, KeycloakRole keycloakRole);
 
     String getAccessToken();
 }
