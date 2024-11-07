@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 public class ResponseModel<T> {
 
     private final HttpStatus httpStatus;
-    private final Integer httpStatusCode;
+    private final int httpStatusCode;
     private final LocalDateTime time = LocalDateTime.now();
-
+    private final boolean success;
     private final String message;
     private final T body;
 
@@ -27,6 +27,7 @@ public class ResponseModel<T> {
         this.httpStatusCode = builder.httpStatusCode;
         this.message = builder.message;
         this.body = builder.body;
+        success = builder.success;
     }
 
     @JsonPOJOBuilder(withPrefix = "")
@@ -34,14 +35,16 @@ public class ResponseModel<T> {
 
         private final HttpStatus httpStatus;
         private final int httpStatusCode;
-
+        private final boolean success;
         private String message;
         private T body;
 
         @JsonCreator
-        public Builder(@JsonProperty("httpStatus") HttpStatus httpStatus) {
+        public Builder(@JsonProperty("httpStatus") HttpStatus httpStatus,
+                       @JsonProperty("success") boolean success) {
             this.httpStatus = httpStatus;
             this.httpStatusCode = httpStatus.value();
+            this.success = success;
         }
 
         public Builder<T> message(String message) {
@@ -60,6 +63,6 @@ public class ResponseModel<T> {
     }
 
     public static ResponseModel<Void> buildBasicErrorResponseModel(HttpStatus httpStatus, String errMessage) {
-        return new Builder<Void>(httpStatus).message(errMessage).build();
+        return new Builder<Void>(httpStatus, false).message(errMessage).build();
     }
 }
