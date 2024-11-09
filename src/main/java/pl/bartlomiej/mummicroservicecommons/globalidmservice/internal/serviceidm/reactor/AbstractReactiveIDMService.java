@@ -3,6 +3,8 @@ package pl.bartlomiej.mummicroservicecommons.globalidmservice.internal.serviceid
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.ErrorResponseException;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.reactor.ReactiveKeycloakService;
@@ -29,7 +31,7 @@ public abstract class AbstractReactiveIDMService<T> implements ReactiveIDMServic
     protected abstract String getEntityId(T entity);
 
     @Override
-    public Mono<T> create(KeycloakUserRegistration keycloakUserRegistration, String ipAddress) {
+    public Mono<T> create(final KeycloakUserRegistration keycloakUserRegistration, final String ipAddress) {
         log.info("Started user creation process.");
         return reactiveKeycloakService.create(keycloakUserRegistration)
                 .flatMap(keycloakUserRepresentation -> {
@@ -43,5 +45,11 @@ public abstract class AbstractReactiveIDMService<T> implements ReactiveIDMServic
                             reactiveKeycloakService::delete
                     );
                 });
+    }
+
+    @Override
+    public Mono<T> getEntity(String id) {
+        return reactiveCrudRepository.findById(id)
+                .switchIfEmpty(Mono.error(new ErrorResponseException(HttpStatus.NOT_FOUND)));
     }
 }

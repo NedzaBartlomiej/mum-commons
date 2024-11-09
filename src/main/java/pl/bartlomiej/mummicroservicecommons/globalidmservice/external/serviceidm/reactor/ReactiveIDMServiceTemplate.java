@@ -8,4 +8,6 @@ import reactor.core.publisher.Mono;
  */
 public interface ReactiveIDMServiceTemplate<T> {
     Mono<T> create(KeycloakUserRegistration keycloakUserRegistration, String ipAddress);
+
+    Mono<T> getEntity(String id);
 }
