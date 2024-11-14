@@ -17,7 +17,7 @@ class HttpClientConfig {
     }
 
     @Bean
-    RestClient emailHttpServiceRestClient() {
+    RestClient emailServiceRestClient() {
         return RestClient.builder()
                 .baseUrl(this.emailServiceUrl)
                 .build();
