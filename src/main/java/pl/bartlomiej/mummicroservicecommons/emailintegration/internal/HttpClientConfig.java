@@ -16,6 +16,7 @@ class HttpClientConfig {
         this.emailServiceUrl = emailServiceUrl;
     }
 
+    // todo - made it compatible to use the retry client (solution described in the pom.xml)
     @Bean
     RestClient emailServiceRestClient() {
         return RestClient.builder()

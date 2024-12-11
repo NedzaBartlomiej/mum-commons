@@ -9,6 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <!-- todo - separate commons module to submodules, like commons-email, commons-retry etc
+    (this will be more modular, and this is giving the solution for the emailHttpClient problem)
+    ofc it require dependencies sorting/optimization then
+    (commons - superpom and f.e. commons-email-integration as module in this with its own pom)-->
     <groupId>pl.bartlomiej</groupId>
     <artifactId>mum-microservice-commons</artifactId>
     <version>1.0</version>

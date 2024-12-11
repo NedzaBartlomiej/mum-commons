@@ -98,7 +98,7 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
     }
 
     @Override
-    public String getAccessToken() {
+    public String getServiceAccessToken() {
         return keycloak.tokenManager().getAccessTokenString();
     }
 

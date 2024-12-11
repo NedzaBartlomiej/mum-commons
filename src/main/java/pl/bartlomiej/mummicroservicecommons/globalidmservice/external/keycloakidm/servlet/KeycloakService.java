@@ -11,5 +11,5 @@ public interface KeycloakService {
 
     void assignClientRole(String id, KeycloakRole keycloakRole);
 
-    String getAccessToken();
+    String getServiceAccessToken();
 }
