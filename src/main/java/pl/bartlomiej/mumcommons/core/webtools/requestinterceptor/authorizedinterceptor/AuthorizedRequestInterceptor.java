@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.webtools.retry.unauthorized;
+package pl.bartlomiej.mumcommons.core.webtools.requestinterceptor.authorizedinterceptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,29 +9,35 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.mumcommons.core.webtools.retry.RetryException;
+import pl.bartlomiej.mumcommons.core.webtools.requestinterceptor.RetryException;
 
 import java.io.IOException;
 
-public class UnauthorizedRetryRequestInterceptor implements ClientHttpRequestInterceptor {
-    private static final Logger log = LoggerFactory.getLogger(UnauthorizedRetryRequestInterceptor.class);
+public class AuthorizedRequestInterceptor implements ClientHttpRequestInterceptor {
+    private static final Logger log = LoggerFactory.getLogger(AuthorizedRequestInterceptor.class);
 
-    private final RetryClientTokenProvider tokenProvider;
+    private final AuthorizedInterceptorTokenManager authorizedInterceptorTokenManager;
 
-    public UnauthorizedRetryRequestInterceptor(RetryClientTokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public AuthorizedRequestInterceptor(AuthorizedInterceptorTokenManager authorizedInterceptorTokenManager) {
+        this.authorizedInterceptorTokenManager = authorizedInterceptorTokenManager;
     }
 
     @Override
     @NonNull
     public ClientHttpResponse intercept(@NonNull HttpRequest request, @NonNull byte[] body, @NonNull ClientHttpRequestExecution execution) throws IOException {
-        log.info("Intercepting request using a http client with 401 retry system. URI: {}", request.getURI());
+        log.info("Intercepting request. URI: {}", request.getURI());
         try {
+            log.info("Setting a bearer auth header in request.");
+            request.getHeaders().setBearerAuth(authorizedInterceptorTokenManager.getToken());
+
+            log.info("Executing request.");
             ClientHttpResponse response = execution.execute(request, body);
+
             if (response.getStatusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
-                log.info("Wrong access token in the request.");
-                return this.retryUnauthorizedResponse(tokenProvider, request, body, execution);
+                log.info("Invalid access token in the request.");
+                return this.retryUnauthorizedResponse(request, body, execution);
             }
+
             log.info("Valid token, returning base response.");
             return response;
         } catch (Exception e) {
@@ -40,10 +46,11 @@ public class UnauthorizedRetryRequestInterceptor implements ClientHttpRequestInt
         }
     }
 
-    private ClientHttpResponse retryUnauthorizedResponse(final RetryClientTokenProvider tokenProvider, final HttpRequest request, byte[] body, final ClientHttpRequestExecution execution) {
+    private ClientHttpResponse retryUnauthorizedResponse(final HttpRequest request, byte[] body, final ClientHttpRequestExecution execution) {
         log.info("Retrying an unauthorized request.");
-        request.getHeaders().setBearerAuth(tokenProvider.getValidToken());
         try {
+            authorizedInterceptorTokenManager.refreshToken();
+            request.getHeaders().setBearerAuth(authorizedInterceptorTokenManager.getToken());
             ClientHttpResponse retriedResponse = execution.execute(request, body);
             log.info("Successful retry request, returning retried response.");
             return retriedResponse;

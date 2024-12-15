@@ -97,11 +97,6 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
         userResource.roles().clientLevel(clientRepresentation.getId()).add(Collections.singletonList(roleRepresentation));
     }
 
-    @Override
-    public String getServiceAccessToken() {
-        return keycloak.tokenManager().getAccessTokenString();
-    }
-
     private static void handleResponseStatus(final Response response, final HttpStatus successStatus) {
         if (response.getStatus() != successStatus.value()) {
             log.error("Some error status occurred in keycloak user creation process response: {}", response.getStatusInfo());

@@ -10,6 +10,4 @@ public interface KeycloakService {
     void delete(String id);
 
     void assignClientRole(String id, KeycloakRole keycloakRole);
-
-    String getServiceAccessToken();
 }

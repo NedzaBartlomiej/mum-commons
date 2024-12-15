@@ -11,7 +11,7 @@ import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 
 @AutoConfiguration
 @ConditionalOnProperty(value = "mum-commons.email-integration.enabled", havingValue = "true")
-class HttpExchangeClientConfig {
+class HttpInterfaceConfig {
 
     @Bean
     HttpServiceProxyFactory emailServiceFactory(@Qualifier("emailServiceRestClient") RestClient restClient) {
