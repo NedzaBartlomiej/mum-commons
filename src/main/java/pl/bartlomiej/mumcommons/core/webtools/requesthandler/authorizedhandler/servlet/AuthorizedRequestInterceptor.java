@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.webtools.requestinterceptor.authorizedinterceptor;
+package pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.mumcommons.core.webtools.requestinterceptor.RetryException;
+import pl.bartlomiej.mumcommons.core.webtools.requesthandler.RetryException;
 
 import java.io.IOException;
 

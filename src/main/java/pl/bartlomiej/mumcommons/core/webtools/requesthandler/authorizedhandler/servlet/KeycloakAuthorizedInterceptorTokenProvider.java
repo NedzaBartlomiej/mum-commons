@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.webtools.requestinterceptor.authorizedinterceptor;
+package pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet;
 
 import org.keycloak.admin.client.token.TokenManager;
 

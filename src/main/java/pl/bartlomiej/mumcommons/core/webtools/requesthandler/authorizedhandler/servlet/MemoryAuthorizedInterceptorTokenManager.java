@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.webtools.requestinterceptor.authorizedinterceptor;
+package pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +7,7 @@ public class MemoryAuthorizedInterceptorTokenManager implements AuthorizedInterc
 
     private static final Logger log = LoggerFactory.getLogger(MemoryAuthorizedInterceptorTokenManager.class);
     private final AuthorizedInterceptorTokenProvider tokenProvider;
-    private static String token;
+    private String token;
 
     public MemoryAuthorizedInterceptorTokenManager(AuthorizedInterceptorTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
