@@ -14,11 +14,11 @@ import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.s
 @Slf4j
 @AutoConfiguration
 @ConditionalOnProperty(value = "mum-commons.email-integration.enabled", havingValue = "true")
-class EmailAuthorizedRestClientConfig {
+class KeycloakAuthorizedRestClientConfig {
 
     private final String emailServiceUrl;
 
-    EmailAuthorizedRestClientConfig(@Value("${mum-commons.email-integration.email-service-url}") String emailServiceUrl) {
+    KeycloakAuthorizedRestClientConfig(@Value("${mum-commons.email-integration.email-service-url}") String emailServiceUrl) {
         this.emailServiceUrl = emailServiceUrl;
     }
 
