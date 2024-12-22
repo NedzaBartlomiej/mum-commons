@@ -15,7 +15,6 @@ import java.io.IOException;
 
 public class AuthorizedRequestInterceptor implements ClientHttpRequestInterceptor {
     private static final Logger log = LoggerFactory.getLogger(AuthorizedRequestInterceptor.class);
-
     private final AuthorizedInterceptorTokenManager authorizedInterceptorTokenManager;
 
     public AuthorizedRequestInterceptor(AuthorizedInterceptorTokenManager authorizedInterceptorTokenManager) {
@@ -47,7 +46,7 @@ public class AuthorizedRequestInterceptor implements ClientHttpRequestIntercepto
     }
 
     private ClientHttpResponse retryUnauthorizedResponse(final HttpRequest request, byte[] body, final ClientHttpRequestExecution execution) {
-        log.info("Retrying an unauthorized request.");
+        log.info("Retrying an unauthorized request. URI: {}", request.getURI());
         try {
             authorizedInterceptorTokenManager.refreshToken();
             request.getHeaders().setBearerAuth(authorizedInterceptorTokenManager.getToken());

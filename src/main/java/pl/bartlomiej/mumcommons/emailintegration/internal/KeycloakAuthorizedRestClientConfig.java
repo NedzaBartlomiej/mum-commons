@@ -1,6 +1,5 @@
 package pl.bartlomiej.mumcommons.emailintegration.internal;
 
-import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +10,6 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
 import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.*;
 
-@Slf4j
 @AutoConfiguration
 @ConditionalOnProperty(value = "mum-commons.email-integration.enabled", havingValue = "true")
 class KeycloakAuthorizedRestClientConfig {
@@ -23,10 +21,10 @@ class KeycloakAuthorizedRestClientConfig {
     }
 
     @Bean
-    RestClient emailServiceRestClient(@Qualifier("emailAuthorizedRequestInterceptor") ClientHttpRequestInterceptor interceptor) {
+    RestClient emailServiceAuthorizedRestClient(@Qualifier("emailAuthorizedRequestInterceptor") ClientHttpRequestInterceptor interceptor) {
         return RestClient.builder()
-                .requestInterceptor(interceptor)
                 .baseUrl(emailServiceUrl)
+                .requestInterceptor(interceptor)
                 .build();
     }
 

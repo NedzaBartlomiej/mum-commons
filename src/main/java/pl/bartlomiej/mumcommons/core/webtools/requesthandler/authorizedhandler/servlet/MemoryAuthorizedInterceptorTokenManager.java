@@ -15,10 +15,9 @@ public class MemoryAuthorizedInterceptorTokenManager implements AuthorizedInterc
 
     public String getToken() {
         if (token == null) {
-            log.debug("Token is null, fetching new token. And updating static field");
-            token = tokenProvider.getValidToken();
+            log.debug("Token is null.");
+            this.refreshToken();
         }
-        log.debug("Token isn't null, returning static token.");
         return token;
     }
 

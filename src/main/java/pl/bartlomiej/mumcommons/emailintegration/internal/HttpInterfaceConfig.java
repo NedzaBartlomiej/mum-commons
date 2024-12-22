@@ -14,13 +14,13 @@ import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 class HttpInterfaceConfig {
 
     @Bean
-    HttpServiceProxyFactory emailServiceFactory(@Qualifier("emailServiceRestClient") RestClient restClient) {
+    HttpServiceProxyFactory restClientEmailFactory(@Qualifier("emailServiceAuthorizedRestClient") RestClient restClient) {
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         return HttpServiceProxyFactory.builderFor(adapter).build();
     }
 
     @Bean
-    EmailHttpService emailHttpService(@Qualifier("emailServiceFactory") HttpServiceProxyFactory factory) {
+    EmailHttpService emailHttpService(@Qualifier("restClientEmailFactory") HttpServiceProxyFactory factory) {
         return factory.createClient(EmailHttpService.class);
     }
 }

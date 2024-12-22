@@ -4,14 +4,14 @@ import org.keycloak.admin.client.token.TokenManager;
 
 public class KeycloakAuthorizedInterceptorTokenProvider implements AuthorizedInterceptorTokenProvider {
 
-    private final TokenManager tokenManager;
+    private final TokenManager keycloakTokenManager;
 
-    public KeycloakAuthorizedInterceptorTokenProvider(TokenManager tokenManager) {
-        this.tokenManager = tokenManager;
+    public KeycloakAuthorizedInterceptorTokenProvider(TokenManager keycloakTokenManager) {
+        this.keycloakTokenManager = keycloakTokenManager;
     }
 
     @Override
     public String getValidToken() {
-        return tokenManager.getAccessTokenString();
+        return keycloakTokenManager.getAccessTokenString();
     }
 }
