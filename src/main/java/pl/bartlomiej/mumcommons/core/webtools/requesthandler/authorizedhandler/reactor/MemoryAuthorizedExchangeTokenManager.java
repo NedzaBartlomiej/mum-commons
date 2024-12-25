@@ -9,7 +9,7 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
 
     private static final Logger log = LoggerFactory.getLogger(MemoryAuthorizedExchangeTokenManager.class);
     private final AuthorizedExchangeTokenProvider tokenProvider;
-    private String token; // czy pole w webflux do ktorego sie dostaje czyli to, musi byc zabezpieczone w kontekscie wielowatkowym?
+    private ? token;
 
     public MemoryAuthorizedExchangeTokenManager(AuthorizedExchangeTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
@@ -20,9 +20,9 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
 
     }
 
+
     @Override
     public Mono<Void> refreshToken() {
-        log.info("Refreshing token.");
 
     }
 }
