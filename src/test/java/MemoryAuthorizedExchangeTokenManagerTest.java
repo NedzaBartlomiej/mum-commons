@@ -24,8 +24,9 @@ public class MemoryAuthorizedExchangeTokenManagerTest {
         tokenManager = new MemoryAuthorizedExchangeTokenManager(tokenProvider);
     }
 
+    // todo - crashing on 1577 system threads - using virtual threads: less fetching token invocation but not correctly (one) also
     @Test
-    public void testTokenManagerConcurrencyWithThreads() throws InterruptedException {
+    public void testRefreshTokenConcurrencyOptimization() throws InterruptedException {
         int numberOfThreads = 1000; // Liczba wątków próbujących pobrać token jednocześnie
 
         // Używamy ExecutorService, aby zarządzać wątkami w sposób bardziej kontrolowany

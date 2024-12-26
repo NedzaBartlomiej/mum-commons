@@ -30,9 +30,8 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
 
         Mono<String> newFetchingMono = Mono.defer(() -> this.tokenProvider.getValidToken()
                 .doOnSuccess(fetchedToken -> {
-                    if (this.tokenRef.compareAndSet(null, fetchedToken)) {
-                        log.debug("No token available, fetched new one.");
-                    }
+                    log.debug("No token available, fetched new one.");
+                    this.tokenRef.set(fetchedToken);
                 })
                 .doFinally(signalType -> this.fetchingMonoRef.set(null))
         );
@@ -41,6 +40,7 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
         );
     }
 
+    // todo - fix it (described in test)
     @Override
     public Mono<Void> refreshToken() {
         Mono<Void> newRefreshingMono = Mono.defer(() -> this.tokenProvider.getValidToken()
