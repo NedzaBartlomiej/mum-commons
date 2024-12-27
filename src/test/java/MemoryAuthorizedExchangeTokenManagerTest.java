@@ -1,78 +1,65 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.reactor.AuthorizedExchangeTokenProvider;
 import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.reactor.MemoryAuthorizedExchangeTokenManager;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-// AI GENERATED TEST - NOT OFFICIAL RELEASE
-public class MemoryAuthorizedExchangeTokenManagerTest {
+import static org.mockito.Mockito.*;
+
+// AI GENERATED TESTS
+class MemoryAuthorizedExchangeTokenManagerTest {
 
     private MemoryAuthorizedExchangeTokenManager tokenManager;
+    private AuthorizedExchangeTokenProvider tokenProvider;
 
     @BeforeEach
-    public void setup() {
-        // Symulacja provider, który pobiera token
-        pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.reactor.AuthorizedExchangeTokenProvider tokenProvider = () -> {
-            // Zakładamy, że token jest pobierany asynchronicznie
-            System.out.println("fetching token");
-            return Mono.just("token" + Math.random());
-        };
-
+    void setUp() {
+        // Tworzymy mock dla tokenProvider
+        tokenProvider = mock(AuthorizedExchangeTokenProvider.class);
         tokenManager = new MemoryAuthorizedExchangeTokenManager(tokenProvider);
     }
 
-    // todo - crashing on 1577 system threads - using virtual threads: less fetching token invocation but not correctly (one) also
     @Test
-    public void testRefreshTokenConcurrencyOptimization() throws InterruptedException {
-        int numberOfThreads = 1000; // Liczba wątków próbujących pobrać token jednocześnie
+    void testGetTokenWithMultipleThreadsConfigurable() {
+        int threadCount = 100; // Liczba równoczesnych wątków do testowania
 
-        // Używamy ExecutorService, aby zarządzać wątkami w sposób bardziej kontrolowany
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+        // Przygotowanie: Mockowanie, że token nie jest jeszcze dostępny
+        String newToken = "newToken";
+        when(tokenProvider.getValidToken()).thenReturn(Mono.just(newToken));
 
-        // Uruchamiamy wszystkie wątki
-        for (int i = 0; i < numberOfThreads; i++) {
-            executorService.submit(() -> {
-                // Subskrypcja na `Mono` bez blokowania wątków w głównym wątku
-                tokenManager.refreshToken()
-                        .doFinally(signalType -> latch.countDown()) // Zapewni, że wszystkie wątki skończą
-                        .subscribe(token -> {
-                            // Logowanie dla każdego tokenu
-                            System.out.println("Token: " + token);
-                        });
-            });
-        }
+        // Wywołujemy getToken() równocześnie w wielu wątkach
+        Flux<String> tokenFlux = Flux.fromStream(IntStream.range(0, threadCount).mapToObj(i -> tokenManager.getToken()))
+                .flatMap(mono -> mono);
 
-        // Czekamy na zakończenie wszystkich wątków
-        latch.await();
-        executorService.shutdown();
+        StepVerifier.create(tokenFlux)
+                .expectNextCount(threadCount) // Oczekujemy, że każdy wątek zwróci token
+                .verifyComplete();
+
+        // Sprawdzamy, czy provider był wywołany tylko raz
+        verify(tokenProvider, times(1)).getValidToken();
     }
 
     @Test
-    public void testGetTokenConcurrencySafety() throws InterruptedException {
-        int numberOfThreads = 50; // Liczba wątków próbujących pobrać token jednocześnie
+    void testRefreshTokenWithMultipleThreadsConfigurable() {
+        int threadCount = 100;
+        when(tokenProvider.getValidToken()).thenReturn(Mono.just("newToken"));
 
-        // Używamy ExecutorService do zarządzania wątkami
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-        CountDownLatch latch = new CountDownLatch(numberOfThreads); // Używamy CountDownLatch, by poczekać na zakończenie wszystkich wątków
+        // Uruchamiamy równoczesne wywołania refreshToken
+        List<Mono<Void>> refreshMonos = IntStream.range(0, threadCount)
+                .mapToObj(i -> tokenManager.refreshToken())
+                .collect(Collectors.toList());
 
-        // Uruchamiamy wszystkie wątki
-        for (int i = 0; i < numberOfThreads; i++) {
-            executorService.submit(() -> {
-                tokenManager.getToken()
-                        .doFinally(signalType -> latch.countDown()) // Zmniejszamy licznik po zakończeniu każdego wątku
-                        .subscribe(token -> {
-                            // Sprawdzamy, czy token jest poprawny
-                            System.out.println(Thread.currentThread().getName() + " fetched token: " + token);
-                        });
-            });
-        }
+        // Subskrybujemy wszystkie Monosy
+        StepVerifier.create(Mono.when(refreshMonos))
+                .verifyComplete();
 
-        // Czekamy na zakończenie wszystkich wątków
-        latch.await();
-        executorService.shutdown();
+        // Weryfikacja, że provider był wywołany tylko raz
+        verify(tokenProvider, times(1)).getValidToken();
     }
 }

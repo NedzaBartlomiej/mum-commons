@@ -24,7 +24,7 @@ public class AuthorizedExchangeFilterFunction implements ExchangeFilterFunction 
     public Mono<ClientResponse> filter(@NonNull ClientRequest request, @NonNull ExchangeFunction next) {
         log.info("Filtering request. URI: {}", request.url());
         return this.setBearerAuth(request)
-                .flatMap(next::exchange)
+                .flatMap(next::exchange) // todo - fix - throwing exception and streaming error signal result 500 - https://medium.com/@robert.junklewitz/global-webclient-retry-logic-for-all-endpoints-in-spring-webflux-dbbe54206b63 use it
                 .flatMap(response -> {
                     if (response.statusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
                         log.info("Invalid exchange access token.");

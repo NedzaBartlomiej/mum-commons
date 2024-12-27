@@ -7,7 +7,6 @@ import reactor.core.publisher.Mono;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-// todo
 public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeTokenManager {
 
     private static final Logger log = LoggerFactory.getLogger(MemoryAuthorizedExchangeTokenManager.class);
@@ -40,11 +39,13 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
         );
     }
 
-    // todo - fix it (described in test)
     @Override
     public Mono<Void> refreshToken() {
         Mono<Void> newRefreshingMono = Mono.defer(() -> this.tokenProvider.getValidToken()
-                .doOnSuccess(ignored -> log.debug("Refreshing token. {}", Thread.currentThread().getName()))
+                .doOnSuccess(fetchedToken -> {
+                    log.debug("Refreshing token in thread: {}", Thread.currentThread().getName());
+                    this.tokenRef.set(fetchedToken);
+                })
                 .doFinally(signalType -> this.refreshingMonoRef.set(null))
                 .then()
         );
@@ -52,4 +53,5 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
                 Objects.requireNonNullElseGet(existingRefreshingMono, newRefreshingMono::cache)
         );
     }
+
 }
