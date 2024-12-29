@@ -23,12 +23,14 @@ public class AuthorizedExchangeFilterFunction implements ExchangeFilterFunction 
     @NonNull
     public Mono<ClientResponse> filter(@NonNull ClientRequest request, @NonNull ExchangeFunction next) {
         log.info("Filtering request. URI: {}", request.url());
-        return this.setBearerAuth(request, this.tokenManager.getToken())
-                .flatMap(next::exchange) // todo - fix - throwing exception and streaming error signal result 500 - https://medium.com/@robert.junklewitz/global-webclient-retry-logic-for-all-endpoints-in-spring-webflux-dbbe54206b63 use it
+        return tokenManager.getToken()
+                .flatMap(token -> this.setBearerAuth(request, token))
+                .flatMap(next::exchange)
                 .flatMap(response -> {
                     if (response.statusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
                         log.info("Invalid exchange access token.");
-                        return this.retryUnauthorizedResponse(request, next);
+                        return response.releaseBody()
+                                .then(this.retryUnauthorizedResponse(request, next));
                     }
                     log.info("Valid exchange token, returning filtered response.");
                     return Mono.just(response);
@@ -39,7 +41,8 @@ public class AuthorizedExchangeFilterFunction implements ExchangeFilterFunction 
 
     private Mono<ClientResponse> retryUnauthorizedResponse(final ClientRequest request, final ExchangeFunction next) {
         log.info("Retrying an unauthorized request. URI: {}", request.url());
-        return this.setBearerAuth(request, this.tokenManager.getToken())
+        return this.tokenManager.refreshToken()
+                .flatMap(newToken -> this.setBearerAuth(request, newToken))
                 .flatMap(next::exchange)
                 .doOnSuccess(retriedResponse ->
                         log.info("Successful retry request, returning retried response.")
@@ -49,11 +52,11 @@ public class AuthorizedExchangeFilterFunction implements ExchangeFilterFunction 
                 );
     }
 
-    private Mono<ClientRequest> setBearerAuth(final ClientRequest request, final Mono<String> getTokenMono) {
+    private Mono<ClientRequest> setBearerAuth(final ClientRequest request, final String token) {
         log.info("Setting a bearer auth header in request.");
-        return getTokenMono
-                .map(token -> ClientRequest.from(request)
-                        .headers(headers -> headers.setBearerAuth(token))
+        return Mono.just(token)
+                .map(t -> ClientRequest.from(request)
+                        .headers(headers -> headers.setBearerAuth(t))
                         .build())
                 .doOnSuccess(r -> log.info("Bearer token set successfully."))
                 .doOnError(e -> log.error("Failed to set bearer token.", e));

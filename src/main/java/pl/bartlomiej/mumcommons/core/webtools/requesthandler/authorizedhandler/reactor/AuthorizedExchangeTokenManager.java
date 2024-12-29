@@ -5,5 +5,5 @@ import reactor.core.publisher.Mono;
 public interface AuthorizedExchangeTokenManager {
     Mono<String> getToken();
 
-    Mono<Void> refreshToken();
+    Mono<String> refreshToken();
 }

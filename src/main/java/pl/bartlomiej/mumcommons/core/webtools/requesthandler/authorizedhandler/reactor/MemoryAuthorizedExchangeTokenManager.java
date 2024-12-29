@@ -12,7 +12,7 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
     private static final Logger log = LoggerFactory.getLogger(MemoryAuthorizedExchangeTokenManager.class);
     private final AuthorizedExchangeTokenProvider tokenProvider;
     private final AtomicReference<Mono<String>> tokenRef = new AtomicReference<>();
-    private final AtomicReference<Mono<Void>> refreshingMonoRef = new AtomicReference<>();
+    private final AtomicReference<Mono<String>> refreshingMonoRef = new AtomicReference<>();
 
     public MemoryAuthorizedExchangeTokenManager(AuthorizedExchangeTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
@@ -30,14 +30,13 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
     }
 
     @Override
-    public Mono<Void> refreshToken() {
-        Mono<Void> newRefreshingMono = Mono.defer(() -> this.tokenProvider.getValidToken()
+    public Mono<String> refreshToken() {
+        Mono<String> newRefreshingMono = Mono.defer(() -> this.tokenProvider.getValidToken()
                 .doOnSuccess(fetchedToken -> {
                     log.debug("Refreshing token in thread: {}", Thread.currentThread().getName());
                     this.tokenRef.set(Mono.just(fetchedToken));
                 })
                 .doFinally(signalType -> this.refreshingMonoRef.set(null))
-                .then()
         );
         return this.refreshingMonoRef.updateAndGet(existingRefreshingMono ->
                 Objects.requireNonNullElseGet(existingRefreshingMono, newRefreshingMono::cache)

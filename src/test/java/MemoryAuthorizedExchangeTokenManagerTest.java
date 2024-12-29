@@ -50,7 +50,7 @@ class MemoryAuthorizedExchangeTokenManagerTest {
         int threadCount = 10000;
 
         // Uruchamiamy równoczesne wywołania refreshToken na wątkach reaktywnych
-        List<Mono<Void>> refreshMonos = IntStream.range(0, threadCount)
+        List<Mono<String>> refreshMonos = IntStream.range(0, threadCount)
                 .mapToObj(i -> tokenManager.refreshToken().subscribeOn(Schedulers.parallel())) // Użycie reaktywnych wątków
                 .collect(Collectors.toList());
 
