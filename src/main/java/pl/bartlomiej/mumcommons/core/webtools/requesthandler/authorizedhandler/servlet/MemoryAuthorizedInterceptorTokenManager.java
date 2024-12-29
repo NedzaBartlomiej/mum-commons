@@ -13,6 +13,7 @@ public class MemoryAuthorizedInterceptorTokenManager implements AuthorizedInterc
         this.tokenProvider = tokenProvider;
     }
 
+    @Override
     public String getToken() {
         if (token == null) {
             log.debug("Token is null.");
@@ -21,6 +22,7 @@ public class MemoryAuthorizedInterceptorTokenManager implements AuthorizedInterc
         return token;
     }
 
+    @Override
     public void refreshToken() {
         log.info("Refreshing token.");
         token = tokenProvider.getValidToken();

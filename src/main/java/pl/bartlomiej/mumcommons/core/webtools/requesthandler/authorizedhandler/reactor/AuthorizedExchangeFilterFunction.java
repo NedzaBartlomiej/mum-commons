@@ -23,7 +23,7 @@ public class AuthorizedExchangeFilterFunction implements ExchangeFilterFunction 
     @NonNull
     public Mono<ClientResponse> filter(@NonNull ClientRequest request, @NonNull ExchangeFunction next) {
         log.info("Filtering request. URI: {}", request.url());
-        return this.setBearerAuth(request)
+        return this.setBearerAuth(request, this.tokenManager.getToken())
                 .flatMap(next::exchange) // todo - fix - throwing exception and streaming error signal result 500 - https://medium.com/@robert.junklewitz/global-webclient-retry-logic-for-all-endpoints-in-spring-webflux-dbbe54206b63 use it
                 .flatMap(response -> {
                     if (response.statusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
@@ -39,8 +39,7 @@ public class AuthorizedExchangeFilterFunction implements ExchangeFilterFunction 
 
     private Mono<ClientResponse> retryUnauthorizedResponse(final ClientRequest request, final ExchangeFunction next) {
         log.info("Retrying an unauthorized request. URI: {}", request.url());
-        return tokenManager.refreshToken()
-                .then(this.setBearerAuth(request))
+        return this.setBearerAuth(request, this.tokenManager.getToken())
                 .flatMap(next::exchange)
                 .doOnSuccess(retriedResponse ->
                         log.info("Successful retry request, returning retried response.")
@@ -50,9 +49,9 @@ public class AuthorizedExchangeFilterFunction implements ExchangeFilterFunction 
                 );
     }
 
-    private Mono<ClientRequest> setBearerAuth(final ClientRequest request) {
+    private Mono<ClientRequest> setBearerAuth(final ClientRequest request, final Mono<String> getTokenMono) {
         log.info("Setting a bearer auth header in request.");
-        return this.tokenManager.getToken()
+        return getTokenMono
                 .map(token -> ClientRequest.from(request)
                         .headers(headers -> headers.setBearerAuth(token))
                         .build())

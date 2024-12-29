@@ -11,8 +11,7 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
 
     private static final Logger log = LoggerFactory.getLogger(MemoryAuthorizedExchangeTokenManager.class);
     private final AuthorizedExchangeTokenProvider tokenProvider;
-    private final AtomicReference<String> tokenRef = new AtomicReference<>();
-    private final AtomicReference<Mono<String>> fetchingMonoRef = new AtomicReference<>();
+    private final AtomicReference<Mono<String>> tokenRef = new AtomicReference<>();
     private final AtomicReference<Mono<Void>> refreshingMonoRef = new AtomicReference<>();
 
     public MemoryAuthorizedExchangeTokenManager(AuthorizedExchangeTokenProvider tokenProvider) {
@@ -21,21 +20,12 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
 
     @Override
     public Mono<String> getToken() {
-        String currentToken = this.tokenRef.get();
-        if (currentToken != null) {
-            log.debug("Token isn't null, returning existing.");
-            return Mono.just(currentToken);
-        }
-
-        Mono<String> newFetchingMono = Mono.defer(() -> this.tokenProvider.getValidToken()
-                .doOnSuccess(fetchedToken -> {
-                    log.debug("No token available, fetched new one.");
-                    this.tokenRef.set(fetchedToken);
-                })
-                .doFinally(signalType -> this.fetchingMonoRef.set(null))
-        );
-        return this.fetchingMonoRef.updateAndGet(existingFetchingMono ->
-                Objects.requireNonNullElseGet(existingFetchingMono, newFetchingMono::cache)
+        Mono<String> token = this.tokenRef.get();
+        if (token != null) return token;
+        return this.tokenRef.updateAndGet(currentToken ->
+                currentToken != null
+                        ? currentToken
+                        : this.tokenProvider.getValidToken().cache()
         );
     }
 
@@ -44,7 +34,7 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
         Mono<Void> newRefreshingMono = Mono.defer(() -> this.tokenProvider.getValidToken()
                 .doOnSuccess(fetchedToken -> {
                     log.debug("Refreshing token in thread: {}", Thread.currentThread().getName());
-                    this.tokenRef.set(fetchedToken);
+                    this.tokenRef.set(Mono.just(fetchedToken));
                 })
                 .doFinally(signalType -> this.refreshingMonoRef.set(null))
                 .then()
@@ -53,5 +43,4 @@ public class MemoryAuthorizedExchangeTokenManager implements AuthorizedExchangeT
                 Objects.requireNonNullElseGet(existingRefreshingMono, newRefreshingMono::cache)
         );
     }
-
 }
