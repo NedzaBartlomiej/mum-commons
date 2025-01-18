@@ -32,7 +32,7 @@ public abstract class AbstractIDMService<T> implements IDMServiceTemplate<T> {
     protected abstract String getEntityId(T entity);
 
     @Override
-    public T create(final KeycloakUserRegistration keycloakUserRegistration, final String ipAddress) {
+    public T register(final KeycloakUserRegistration keycloakUserRegistration, final String ipAddress) {
         log.info("Started user creation process.");
         var keycloakUserRepresentation = keycloakService.create(keycloakUserRegistration);
         T entity = this.createEntity(keycloakUserRepresentation, ipAddress);

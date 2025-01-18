@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
  * Reactive counterpart for IDMServiceTemplate
  */
 public interface ReactiveIDMServiceTemplate<T> {
-    Mono<T> create(KeycloakUserRegistration keycloakUserRegistration, String ipAddress);
+    Mono<T> register(KeycloakUserRegistration keycloakUserRegistration, String ipAddress);
 
     Mono<T> getEntity(String id);
 }

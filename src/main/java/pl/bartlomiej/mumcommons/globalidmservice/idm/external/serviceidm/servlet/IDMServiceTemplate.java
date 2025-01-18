@@ -11,10 +11,10 @@ import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.
 public interface IDMServiceTemplate<T> {
 
     /**
-     * @param keycloakUserRegistration interface for T-user register DTO object
+     * @param keycloakUserRegistration interface for a T-user register DTO object
      * @param ipAddress                user's IP Address used to ip-auth-protection feature
      */
-    T create(KeycloakUserRegistration keycloakUserRegistration, String ipAddress);
+    T register(KeycloakUserRegistration keycloakUserRegistration, String ipAddress);
 
     T getEntity(String id);
 }

@@ -31,7 +31,7 @@ public abstract class AbstractReactiveIDMService<T> implements ReactiveIDMServic
     protected abstract String getEntityId(T entity);
 
     @Override
-    public Mono<T> create(final KeycloakUserRegistration keycloakUserRegistration, final String ipAddress) {
+    public Mono<T> register(final KeycloakUserRegistration keycloakUserRegistration, final String ipAddress) {
         log.info("Started user creation process.");
         return reactiveKeycloakService.create(keycloakUserRegistration)
                 .flatMap(keycloakUserRepresentation -> {
