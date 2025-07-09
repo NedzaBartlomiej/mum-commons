@@ -14,11 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.mumcommons.core.offsettransaction.servlet.OffsetTransactionOperator;
+import pl.bartlomiej.mumcommons.core.offsettransaction.OffsetTransactionOperator;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakRole;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRegistration;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.servlet.KeycloakService;
 
 import java.util.Collections;
 
@@ -26,11 +26,9 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
 
     private static final Logger log = LoggerFactory.getLogger(DefaultKeycloakService.class);
     private final RealmResource realmResource;
-    private final Keycloak keycloak;
     private final KeycloakProperties properties;
 
     DefaultKeycloakService(KeycloakProperties properties, Keycloak keycloak) {
-        this.keycloak = keycloak;
         this.realmResource = keycloak.realm(properties.realmName());
         this.properties = properties;
     }

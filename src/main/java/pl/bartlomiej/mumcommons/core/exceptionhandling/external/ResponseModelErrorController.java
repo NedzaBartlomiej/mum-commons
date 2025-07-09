@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.exceptionhandling.external.servlet;
+package pl.bartlomiej.mumcommons.core.exceptionhandling.external;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;

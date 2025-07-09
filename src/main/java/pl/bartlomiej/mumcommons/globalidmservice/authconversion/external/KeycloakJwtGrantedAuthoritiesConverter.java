@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.servlet;
+package pl.bartlomiej.mumcommons.globalidmservice.authconversion.external;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;

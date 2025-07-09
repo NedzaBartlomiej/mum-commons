@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.servlet;
+package pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm;
 
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRegistration;
 

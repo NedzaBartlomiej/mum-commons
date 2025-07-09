@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.offsettransaction.servlet;
+package pl.bartlomiej.mumcommons.core.offsettransaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

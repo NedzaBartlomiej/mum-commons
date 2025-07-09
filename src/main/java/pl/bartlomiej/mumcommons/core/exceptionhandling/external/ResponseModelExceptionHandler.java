@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.exceptionhandling.external.servlet;
+package pl.bartlomiej.mumcommons.core.exceptionhandling.external;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

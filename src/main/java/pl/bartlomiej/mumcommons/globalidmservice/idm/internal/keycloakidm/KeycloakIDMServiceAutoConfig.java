@@ -7,12 +7,11 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.reactor.ReactiveKeycloakService;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.servlet.KeycloakService;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
 
 @AutoConfiguration
 @EnableConfigurationProperties(KeycloakProperties.class)
-@ConditionalOnProperty(value = "mum-commons.global-idm-service.keycloak.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "mum-commons.keycloak.enabled", havingValue = "true")
 class KeycloakIDMServiceAutoConfig {
 
     @Bean
@@ -27,13 +26,8 @@ class KeycloakIDMServiceAutoConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "mum-commons.keycloak.global-idm-service.enabled", havingValue = "true")
     public KeycloakService keycloakService(KeycloakProperties properties, Keycloak keycloak) {
         return new DefaultKeycloakService(properties, keycloak);
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "mum-commons.global-idm-service.type", havingValue = "reactor")
-    public ReactiveKeycloakService reactiveKeycloakService(KeycloakProperties properties, Keycloak keycloak, KeycloakService keycloakService) {
-        return new DefaultReactiveKeycloakService(properties, keycloak, keycloakService);
     }
 }

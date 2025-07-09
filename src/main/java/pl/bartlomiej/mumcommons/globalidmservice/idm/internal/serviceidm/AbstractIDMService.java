@@ -1,15 +1,15 @@
-package pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm.servlet;
+package pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.mumcommons.core.offsettransaction.servlet.OffsetTransactionOperator;
+import pl.bartlomiej.mumcommons.core.offsettransaction.OffsetTransactionOperator;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRegistration;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.servlet.KeycloakService;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.servlet.IDMServiceTemplate;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.IDMServiceTemplate;
 
 /**
  * Abstract IDM service for library clients to collect all IDM methods,

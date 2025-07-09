@@ -1,4 +1,4 @@
-package pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet;
+package pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
