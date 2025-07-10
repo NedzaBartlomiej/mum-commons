@@ -54,17 +54,17 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
         }
 
         OffsetTransactionOperator.performOffsetConsumerTransaction(
-                createdUser,
                 createdUser.id(),
-                u -> this.assignClientRole(u.id(), keycloakUserRegistration.getDefaultRole()),
+                createdUser.id(),
+                id -> this.assignClientRole(id, keycloakUserRegistration.getDefaultRole()),
                 this::delete
         );
 
         log.info("Sending verification email message.");
         OffsetTransactionOperator.performOffsetConsumerTransaction(
-                createdUser,
                 createdUser.id(),
-                u -> usersResource.get(u.id()).sendVerifyEmail(),
+                createdUser.id(),
+                id -> usersResource.get(id).sendVerifyEmail(),
                 this::delete
         );
 

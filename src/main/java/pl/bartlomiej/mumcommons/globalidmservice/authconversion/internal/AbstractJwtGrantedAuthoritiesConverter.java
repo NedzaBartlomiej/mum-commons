@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 public abstract class AbstractJwtGrantedAuthoritiesConverter {
 
-    public static final String DEFAULT_KC_ROLE_PREFIX = "DEF_";
     private final String keycloakClientId;
     private static final String REALM_ACCESS_CLAIM = "realm_access";
     private static final String RESOURCE_ACCESS_CLAIM = "resource_access";
@@ -45,9 +44,7 @@ public abstract class AbstractJwtGrantedAuthoritiesConverter {
         if (roles instanceof List<?>) {
             return ((List<?>) roles).stream()
                     .filter(role -> role instanceof String)
-                    .map(role -> (String) role)
-                    // filter default role prefix
-                    .map(role -> role.startsWith(DEFAULT_KC_ROLE_PREFIX) ? role.substring(DEFAULT_KC_ROLE_PREFIX.length()) : role);
+                    .map(role -> (String) role);
         }
         return Stream.empty();
     }
