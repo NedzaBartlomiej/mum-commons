@@ -65,4 +65,16 @@ public class ResponseModel<T> {
     public static ResponseModel<Void> buildBasicErrorResponseModel(HttpStatus httpStatus, String errMessage) {
         return new Builder<Void>(httpStatus, false).message(errMessage).build();
     }
+
+    @Override
+    public String toString() {
+        return "ResponseModel{" +
+                "httpStatus=" + httpStatus +
+                ", httpStatusCode=" + httpStatusCode +
+                ", time=" + time +
+                ", success=" + success +
+                ", message='" + message + '\'' +
+                ", body=" + body +
+                '}';
+    }
 }
