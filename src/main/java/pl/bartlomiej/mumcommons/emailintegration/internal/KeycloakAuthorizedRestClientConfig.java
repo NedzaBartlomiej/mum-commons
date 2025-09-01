@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.*;
+import pl.bartlomiej.mumcommons.coreutils.webtools.requesthandler.authorizedhandler.*;
 
 @AutoConfiguration
 @ConditionalOnProperty(value = "mum-commons.email-integration.enabled", havingValue = "true")

@@ -1,7 +1,9 @@
-pl.bartlomiej.mumcommons.core.exceptionhandling.internal.ExceptionHandlingAutoConfig
+pl.bartlomiej.mumcommons.coreutils.exceptionhandling.internal.ExceptionHandlingAutoConfig
 
 pl.bartlomiej.mumcommons.emailintegration.internal.KeycloakAuthorizedRestClientConfig
 pl.bartlomiej.mumcommons.emailintegration.internal.HttpInterfaceConfig
 
-pl.bartlomiej.mumcommons.globalidmservice.authconversion.internal.AuthConversionAutoConfig
-pl.bartlomiej.mumcommons.globalidmservice.idm.internal.keycloakidm.KeycloakIDMServiceAutoConfig
+
+pl.bartlomiej.mumcommons.keycloakintegration.KeycloakAutoConfig
+pl.bartlomiej.mumcommons.keycloakintegration.authconversion.internal.AuthConversionAutoConfig
+pl.bartlomiej.mumcommons.keycloakintegration.idm.internal.keycloakidm.KeycloakIDMAutoConfig
