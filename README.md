@@ -38,7 +38,7 @@ To make logs fully readable and correlate related entries, you need to include t
 configuration:
 
 ```properties
-logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} %-5level [%X{traceId}] %logger{36} - %msg%n
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} %-5level traceId=[%X{traceId}] %logger{36} - %msg%n
 ```
 
 Constant `TRACE_ID="traceId"` by default - you can change it in the mum-commons code in

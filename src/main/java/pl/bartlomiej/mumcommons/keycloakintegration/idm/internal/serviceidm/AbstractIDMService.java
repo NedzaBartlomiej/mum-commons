@@ -35,10 +35,17 @@ public abstract class AbstractIDMService<T> implements IDMServiceTemplate<T> {
 
     protected abstract String getEntityId(T entity);
 
+    // TODO: to refine MDC context - generally it works correctly (meaning about pattern etc. etc.)
+    //  I need to learn a little bit more about this, cause I don't have context everywhere:
+    //  Transaction & Deletion don't have traceId - they should have the same traceId as Creation!
+    // I just need to figure out the MDC context a little bit more
+    // to make it fully understandable and operate it without any problems
     @Override
     public T register(final KeycloakUserRegistration keycloakUserRegistration, final String ipAddress) {
         try {
-            MDC.put(LogTraceConstants.TRACE_ID, UUID.randomUUID().toString());
+            if (MDC.get(LogTraceConstants.TRACE_ID) == null) {
+                MDC.put(LogTraceConstants.TRACE_ID, UUID.randomUUID().toString());
+            }
 
             log.info("Started user creation process.");
             if (ipAddress == null || ipAddress.isBlank()) {
@@ -48,7 +55,7 @@ public abstract class AbstractIDMService<T> implements IDMServiceTemplate<T> {
             var keycloakUserRepresentation = keycloakService.create(keycloakUserRegistration);
             T entity = this.createEntity(keycloakUserRepresentation, ipAddress);
 
-            log.info("Saving created keycloak user in the database.");
+            log.info("Saving created keycloak user in the database."); // ^^TODO^^ THIS LINE ALSO DOESN'T HAVE TRACEID RELATED TO THE CREATION FLOW
             return OffsetTransactionOperator.performOffsetFunctionTransaction(
                     entity,
                     this.getEntityId(entity),

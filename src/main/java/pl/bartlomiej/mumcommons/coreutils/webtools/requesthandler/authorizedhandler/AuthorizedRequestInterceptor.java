@@ -28,7 +28,9 @@ public class AuthorizedRequestInterceptor implements ClientHttpRequestIntercepto
     @NonNull
     public ClientHttpResponse intercept(@NonNull HttpRequest request, @NonNull byte[] body, @NonNull ClientHttpRequestExecution execution) throws IOException {
         try {
-            MDC.put(LogTraceConstants.TRACE_ID, UUID.randomUUID().toString());
+            if (MDC.get(LogTraceConstants.TRACE_ID) == null) {
+                MDC.put(LogTraceConstants.TRACE_ID, UUID.randomUUID().toString());
+            }
 
             log.debug("Intercepting request. URI: {}", request.getURI());
 

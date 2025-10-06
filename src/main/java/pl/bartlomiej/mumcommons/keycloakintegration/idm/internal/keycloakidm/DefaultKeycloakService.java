@@ -12,10 +12,8 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.mumcommons.coreutils.constants.LogTraceConstants;
 import pl.bartlomiej.mumcommons.coreutils.offsettransaction.OffsetTransactionOperator;
 import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.KeycloakService;
 import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.model.KeycloakRole;
@@ -23,7 +21,6 @@ import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.mod
 import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.model.KeycloakUserRepresentation;
 
 import java.util.Collections;
-import java.util.UUID;
 
 class DefaultKeycloakService extends AbstractKeycloakService implements KeycloakService {
 
@@ -38,48 +35,43 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
 
     @Override
     public KeycloakUserRepresentation create(final KeycloakUserRegistration keycloakUserRegistration) {
-        try {
-            MDC.put(LogTraceConstants.TRACE_ID, UUID.randomUUID().toString());
 
-            log.info("Started keycloak user creation process.");
-            UserRepresentation userRepresentation = super.buildUserRepresentation(keycloakUserRegistration);
-            UsersResource usersResource = this.realmResource.users();
+        log.info("Started keycloak user creation process.");
+        UserRepresentation userRepresentation = super.buildUserRepresentation(keycloakUserRegistration);
+        UsersResource usersResource = this.realmResource.users();
 
-            log.info("Creating user.");
-            KeycloakUserRepresentation createdUser;
-            try (Response response = usersResource.create(userRepresentation)) {
-                if (response.getStatus() != HttpStatus.CREATED.value()) {
-                    log.error("An error/unexpected responseStatus occurred during user creation process.");
-                    throw new ErrorResponseException(HttpStatus.valueOf(response.getStatus()));
-                }
-
-                createdUser = new KeycloakUserRepresentation(
-                        CreatedResponseUtil.getCreatedId(response),
-                        keycloakUserRegistration.getUsername(),
-                        keycloakUserRegistration.getEmail()
-                );
+        log.info("Creating user.");
+        KeycloakUserRepresentation createdUser;
+        try (Response response = usersResource.create(userRepresentation)) {
+            if (response.getStatus() != HttpStatus.CREATED.value()) {
+                log.error("An error/unexpected responseStatus occurred during user creation process.");
+                throw new ErrorResponseException(HttpStatus.valueOf(response.getStatus()));
             }
 
-            OffsetTransactionOperator.performOffsetConsumerTransaction(
-                    createdUser.id(),
-                    createdUser.id(),
-                    id -> this.assignClientRole(id, keycloakUserRegistration.getDefaultRole()),
-                    this::delete
+            createdUser = new KeycloakUserRepresentation(
+                    CreatedResponseUtil.getCreatedId(response),
+                    keycloakUserRegistration.getUsername(),
+                    keycloakUserRegistration.getEmail()
             );
-
-            log.info("Sending verification email message.");
-            OffsetTransactionOperator.performOffsetConsumerTransaction(
-                    createdUser.id(),
-                    createdUser.id(),
-                    id -> usersResource.get(id).sendVerifyEmail(),
-                    this::delete
-            );
-
-            log.debug("Returning successfully created user.");
-            return createdUser;
-        } finally {
-            MDC.clear();
         }
+
+        OffsetTransactionOperator.performOffsetConsumerTransaction(
+                createdUser.id(),
+                createdUser.id(),
+                id -> this.assignClientRole(id, keycloakUserRegistration.getDefaultRole()),
+                this::delete
+        );
+
+        log.info("Sending verification email message.");
+        OffsetTransactionOperator.performOffsetConsumerTransaction(
+                createdUser.id(),
+                createdUser.id(),
+                id -> usersResource.get(id).sendVerifyEmail(),
+                this::delete
+        );
+
+        log.debug("Returning successfully created user.");
+        return createdUser;
     }
 
     @Override
