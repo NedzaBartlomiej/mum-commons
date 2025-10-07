@@ -43,8 +43,10 @@ class DefaultKeycloakService extends AbstractKeycloakService implements Keycloak
         log.info("Creating user.");
         KeycloakUserRepresentation createdUser;
         try (Response response = usersResource.create(userRepresentation)) {
-            if (response.getStatus() != HttpStatus.CREATED.value()) {
-                log.error("An error/unexpected responseStatus occurred during user creation process.");
+            if (response.getStatus() == HttpStatus.CONFLICT.value()) {
+                throw new ErrorResponseException(HttpStatus.valueOf(response.getStatus()));
+            } else if (response.getStatus() != HttpStatus.CREATED.value()) {
+                log.error("An error/unexpected responseStatus occurred during user creation process. Keycloak response status='{}'.", response.getStatus());
                 throw new ErrorResponseException(HttpStatus.valueOf(response.getStatus()));
             }
 
